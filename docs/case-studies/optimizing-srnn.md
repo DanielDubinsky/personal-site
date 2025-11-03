@@ -236,7 +236,7 @@ Run time mean over 100 runs:
 | Version   | Run time(s)  | 
 |-----------|---------------|
 |  v0    | 0.107        |
-|  v1    | 0.46        |
+|  v1    | 0.046        |
 
 Takeaways:
 
@@ -284,7 +284,7 @@ Run time mean over 100 runs:
 | Version   | Run time(s)  | 
 |-----------|---------------|
 |  v0    | 0.107        |
-|  v1    | 0.46        |
-|  v2    | 0.21        |
+|  v1    | 0.046        |
+|  v2    | 0.021        |
 
 We’ve eliminated all the slice/select/stack operators and achieved 5x speedup overall.  
