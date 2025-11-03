@@ -1,5 +1,3 @@
-# Daniel Dubinsky
-
 Welcome to my page, place for thoughts, blogs, projects and whatever else.
 
 **Test, Profile, Optimize, Repeat**
