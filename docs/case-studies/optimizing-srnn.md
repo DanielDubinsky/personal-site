@@ -1,6 +1,6 @@
 ## 1. Introduction
 
-In this writeup, I will explain how I optimized the running time of a neural network called SRNN(Shuffling Recurrent Neural Networks). 
+In this writeup, I will explain how I optimized the running time of a neural network called SRNN(Shuffling Recurrent Neural Network). 
 
 This work was originally developed several years ago as part of an academic project, I hope that someone will find this work helpful, please reach out for any questions/comments.
 
@@ -12,10 +12,10 @@ Each iteration involves the following:
  1. Profiling - analyzing the running the time of every component, identifying bottle-necks and places to intervene.
  2. Implementation - writing and modifying CUDA kernels and PyTorch code.
 
-This article focuses on the **forward function**.
+This article focuses on the forward function.
 Backward-pass optimization was also done and might be covered separately in a future post.
 
-By combining operator fusion, and memory-access optimization, the optimized SRNN forward achieved up to **5× faster execution** while maintaining identical output.
+By combining operator fusion, and memory-access optimization, the optimized SRNN forward achieved up to **5x faster execution** while maintaining identical output.
 
 The following figure shows the runtime improvement on a common GPU used for training and inference.
 
