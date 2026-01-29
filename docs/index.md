@@ -7,3 +7,6 @@ Welcome to my page, place for thoughts, blogs, projects and whatever else.
 
 ## Recent Work
 - [Optimizing SRNN](case-studies/optimizing-srnn.md)  
+- [29.01.2026 - Porting YOLO26n to the Hailo-8L](case-studies/yolo26n-hailo-L8.md)
+
+
