@@ -8,8 +8,8 @@ nav:
   - Home: index.md
   - Contact: contact.md
   - Case Studies:
-      - "Optimizing SRNN": case-studies/optimizing-srnn.md
       - "29.01.2026 - Porting YOLO26n to the Hailo-8L": case-studies/yolo26n-hailo-L8.md
+      - "Optimizing SRNN": case-studies/optimizing-srnn.md
 watch:
   - ./docs/
 markdown_extensions:

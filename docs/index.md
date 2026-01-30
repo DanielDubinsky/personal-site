@@ -6,7 +6,7 @@ Welcome to my page, place for thoughts, blogs, projects and whatever else.
 - Profile and accelerate models on high/low end CPUs, GPUs and accelerators. -->
 
 ## Recent Work
-- [Optimizing SRNN](case-studies/optimizing-srnn.md)  
 - [29.01.2026 - Porting YOLO26n to the Hailo-8L](case-studies/yolo26n-hailo-L8.md)
+- [Optimizing SRNN](case-studies/optimizing-srnn.md)  
 
 
