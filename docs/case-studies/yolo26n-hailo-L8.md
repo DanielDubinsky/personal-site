@@ -143,7 +143,7 @@ With the pipeline validated, the next step was to perform proper post-training q
 #### 7.1. Resolve Environment Issues
 Attempting to run the full quantization process revealed significant environment issues. The Hailo Docker container, running in a WSL2 environment, was not correctly using the host's NVIDIA RTX 4070 Ti for acceleration, causing the process to fall back to CPU and extending the estimated time from minutes to hours.
 
-Two patches were required to fix this:
+Three patches were required to fix this:
 
 1.  **GPU Memory Check:** The DFC aborts if GPU VRAM usage is over 5%. This was patched to allow 50% usage, accommodating the Windows host's memory reservation.
     ```bash
@@ -230,12 +230,44 @@ The C++ implementation showed a slight dip in mAP (0.302 vs 0.315).
 ```
 My main suspicion is the image resizing implementation (e.g., interpolation flags).
 
-### 13. Next Steps
+### 13. Optimization Level 3 Attempt
+
+I ran the Hailo optimization again, this time with `optimization_level=3`, hoping for better accuracy. Unfortunately, I didn't observe an improvement.
+
+Here are the accuracy results of that model:
+
+```text
+============================================================
+EVALUATION RESULTS
+============================================================
+Detections file: yolo26_clean/data/detections_3.json
+Predictions: 591479
+Images with predictions: 4998
+
+Metrics:
+  AP             : 0.3014
+  AP50           : 0.4836
+  AP75           : 0.3242
+  AP_small       : 0.1278
+  AP_medium      : 0.3213
+  AP_large       : 0.4508
+  AR1            : 0.2604
+  AR10           : 0.4292
+  AR100          : 0.4795
+  AR_small       : 0.2678
+  AR_medium      : 0.5225
+  AR_large       : 0.6422
+```
+
+The runtime was the same as the previous optimization level.
+
+### 14. Next Steps
 To further optimize this pipeline, the following steps are planned:
 
-1.  **Adaround Optimization:** Move to Optimization Level 4 to recover the ~6.7% AP loss observed in the hybrid model.
-2.  **Investigate Accuracy Drop:** Determine why the C++ implementation is slightly less accurate than the Python version.
+1.  **Investigate Ported Model Accuracy Drop:** Since optimization level 3 didn't improve the accuracy, I plan to investigate the ported model to understand why the accuracy dropped.
+2.  **Investigate C++ Accuracy Drop:** Determine why the C++ implementation is slightly less accurate than the Python version.
 3.  **Context Reduction:** Experiment with DFC compiler settings to compress the model into fewer execution contexts.
+4. **Port More Models?:** Yolo26s, Yolo26m and Yolo26l.
 
 ## Conclusion
 
