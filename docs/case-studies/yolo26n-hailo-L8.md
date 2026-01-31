@@ -1,5 +1,7 @@
 # Porting YOLO26n to the Hailo-8L: Results & Chronology
 
+29.01.2026
+
 ## Summary & Performance Results
 
 This project successfully ported the YOLO26n model to the Hailo-8L AI accelerator using a hybrid architecture(Hailo + CPU). Below are the key performance metrics achieved on a Raspberry Pi 5.
@@ -16,7 +18,7 @@ The C++ implementation achieves a ~2.3x speedup over the Python baseline and a ~
 | **End-to-End Latency**| 144.21ms | 27.61ms | **11.92ms** | **>12x Speedup vs CPU** |
 | **Frames Per Second (FPS)** | 6.93 | 36.22 | **83.88** | `1000 / Latency` |
 
-The full code for this project is available on GitHub: [DanielDubinsky/yolo26_hailo](https://github.com/DanielDubinsky/yolo26_hailo)
+The full code for this project is available on GitHub: [DanielDubinsky/yolo26_hailo](https://github.com/DanielDubinsky/yolo26_hailo){: target="_blank"}
 
 It includes:
 

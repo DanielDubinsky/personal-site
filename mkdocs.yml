@@ -4,14 +4,39 @@ theme:
   features:
     - content.code.copy
     - content.code.annotate
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.tracking
+    - toc.follow
+  palette: 
+    # Palette toggle for light mode
+    - scheme: default
+      primary: black 
+      accent: indigo 
+      toggle:
+        icon: material/brightness-7 
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - scheme: slate
+      primary: black 
+      accent: indigo 
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
 nav: 
   - Home: index.md
   - Contact: contact.md
   - Case Studies:
-      - "29.01.2026 - Porting YOLO26n to the Hailo-8L": case-studies/yolo26n-hailo-L8.md
+      - "Porting YOLO26n to the Hailo-8L": case-studies/yolo26n-hailo-L8.md
+      - "Non-Invasive Quantification of Viability": case-studies/non-invasive-viability.md
       - "Optimizing SRNN": case-studies/optimizing-srnn.md
+
 watch:
   - ./docs/
+
 markdown_extensions:
   - pymdownx.arithmatex:
       generic: true
@@ -22,10 +47,16 @@ markdown_extensions:
       pygments_style: monokai
   - pymdownx.inlinehilite
   - pymdownx.superfences
+  - pymdownx.details
+  - attr_list
+  - md_in_html
   - admonition
   - codehilite
   - toc:
       permalink: true
+
+extra_css:
+  - stylesheets/extra.css
 
 extra_javascript:
   - https://polyfill.io/v3/polyfill.min.js?features=es6
