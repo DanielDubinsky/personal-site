@@ -1,3 +1,5 @@
+# Optimizing SRNN
+14.06.2020
 ## 1. Introduction
 
 In this writeup, I will explain how I optimized the running time of a neural network called SRNN(Shuffling Recurrent Neural Network). 
@@ -41,7 +43,7 @@ The following figure shows the runtime improvement on a common GPU used for trai
 
 ## 2. Background
 
-The Shuffling Recurrent Neural Network (SRNN) is a recurrent architecture introduced by [Rotman and Wolf](https://doi.org/10.1609/aaai.v35i11.17136) to address instabilities in training deep RNNs, such as exploding and vanishing gradients.  
+The Shuffling Recurrent Neural Network (SRNN) is a recurrent architecture introduced by [Rotman and Wolf](https://doi.org/10.1609/aaai.v35i11.17136){: target="_blank"} to address instabilities in training deep RNNs, such as exploding and vanishing gradients.  
 It modifies the standard RNN recurrence by applying a *circular shift* to the hidden state before combining it with the current input.  
 This simple change encourages better gradient flow and spatial information mixing between hidden units.
 
