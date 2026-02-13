@@ -263,13 +263,17 @@ Metrics:
 
 The runtime was the same as the previous optimization level.
 
-### 14. Next Steps
+### 14. Preprocessing Change: Letterbox
+
+A critical discrepancy was identified in the preprocessing stage. The original implementation used a direct resize, which distorted the aspect ratio of the input images. Swapping this for "letterbox" resizing (maintaining aspect ratio with padding) aligned the inference pipeline with the training modifications. Along with weight and activation clipping, this change recovered the accuracy:
+
+*   **FP32 Baseline (CPU):** Improved from 0.382 to **0.402**.
+*   **Quantized (Hailo):** Improved from 0.302 to **0.371**.
+
+### 15. Next Steps
 To further optimize this pipeline, the following steps are planned:
 
-1.  **Investigate Ported Model Accuracy Drop:** Since optimization level 3 didn't improve the accuracy, I plan to investigate the ported model to understand why the accuracy dropped.
-2.  **Investigate C++ Accuracy Drop:** Determine why the C++ implementation is slightly less accurate than the Python version.
-3.  **Context Reduction:** Experiment with DFC compiler settings to compress the model into fewer execution contexts.
-4. **Port More Models?:** Yolo26s, Yolo26m and Yolo26l.
+1.  **Context Reduction:** Experiment with DFC compiler settings to compress the model into fewer execution contexts.
 
 ## Conclusion
 
