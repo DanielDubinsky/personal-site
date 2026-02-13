@@ -4,20 +4,21 @@
 
 ## Summary & Performance Results
 
-This project successfully ported the YOLO26n model to the Hailo-8L AI accelerator using a hybrid architecture(Hailo + CPU). Below are the key performance metrics achieved on a Raspberry Pi 5.
+This project successfully ported the YOLO26n model to the Hailo-8L AI accelerator using a hybrid architecture (Hailo + CPU). Below are the key performance metrics achieved on a Raspberry Pi 5.
 
 ### Performance Metrics
 
-The C++ implementation achieves a ~2.3x speedup over the Python baseline and a ~12x speedup over the ONNX baseline.
+The C++ implementation achieves a ~2.3x speedup over the Python baseline and a ~13x speedup over the ONNX baseline.
 
 **Table 1: End-to-End Performance**
 
 | Metric | ONNX (CPU) | Python (Hailo + CPU) | C++ (Hailo + CPU) | Notes |
 | :--- | :--- | :--- | :--- | :--- |
-| **mAP** | 0.382 | 0.315 | 0.302 | Minor accuracy drop |
-| **End-to-End Latency**| 144.21ms | 27.61ms | **11.92ms** | **>12x Speedup vs CPU** |
-| **Frames Per Second (FPS)** | 6.93 | 36.22 | **83.88** | `1000 / Latency` |
+| **mAP** | 0.402 | 0.315 | 0.371 | **Recovered via Letterbox** |
+| **End-to-End Latency**| ~150ms | 27.61ms | **11.56ms** | **>13x Speedup vs CPU** |
+| **Frames Per Second (FPS)** | ~6.5 | 36.22 | **86.50** | `1000 / Latency` |
 
+*Note: Originally published with resize preprocessing (0.382 FP32 baseline); corrected to letterbox preprocessing in February 2026. This change aligned the inference pipeline with training, improving the FP32 baseline to 0.402 and the quantized INT8 mAP to 0.371.*
 The full code for this project is available on GitHub: [DanielDubinsky/yolo26_hailo](https://github.com/DanielDubinsky/yolo26_hailo){: target="_blank"}
 
 It includes:
