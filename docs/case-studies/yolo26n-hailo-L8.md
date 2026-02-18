@@ -4,6 +4,8 @@
 
 ## Summary & Performance Results
 
+> **Update (Feb 2026):** While this post originally focused on the Nano (n) model, I have since ported the entire YOLO26 family (s, m, l) to the Hailo-8L using the same hybrid architecture. The full family results and analysis are added in [Step 15](#15-porting-the-full-yolo26-family).
+
 This project successfully ported the YOLO26n model to the Hailo-8L AI accelerator using a hybrid architecture (Hailo + CPU). Below are the key performance metrics achieved on a Raspberry Pi 5.
 
 ### Performance Metrics
@@ -271,11 +273,50 @@ A critical discrepancy was identified in the preprocessing stage. The original i
 *   **FP32 Baseline (CPU):** Improved from 0.382 to **0.402**.
 *   **Quantized (Hailo):** Improved from 0.302 to **0.371**.
 
-### 15. Next Steps
-To further optimize this pipeline, the following steps are planned:
+### 15. Porting the Full YOLO26 Family
 
-1.  **Context Reduction:** Experiment with DFC compiler settings to compress the model into fewer execution contexts.
+With the YOLO26n pipeline validated — graph splitting, hybrid architecture, calibration, and C++ postprocessor — the natural next step was to scale it to the remaining variants: Small, Medium, and Large.
+
+#### Why This Was Straightforward
+
+The templated C++ postprocessor (introduced in step 12) was designed for exactly this. Each YOLO26 variant uses the same detection head structure but with different stride/grid configurations. Porting a new variant required only:
+
+1. **Exporting the backbone** with the same graph-splitting logic (automated in `export.cli`).
+2. **Calibrating** with the same COCO subset and optimization level.
+3. **Instantiating the C++ template** with the variant's stride and grid parameters.
+
+No architectural changes to the pipeline were needed.
+
+#### Variant-Specific Observations
+
+**YOLO26s** compiled cleanly and behaved as expected — roughly half the FPS of Nano with a proportional accuracy gain.
+
+**YOLO26m** was the first variant where quantization noise became a real concern. Despite having a higher FP32 baseline (0.525) than Small (0.477), its INT8 accuracy retention dropped to 84.0% — worse than any other variant. The model appears to sit in a difficult zone: wide enough that feature splitters and early convolutions introduce significant quantization error, but not deep enough to absorb it. 
+
+
+**YOLO26l** had the most execution contexts due to its size (the DFC partitions the backbone across the Hailo-8L's limited SRAM). Despite this, it recovered to 87.4% accuracy retention — the sheer parameter count provides enough redundancy to tolerate the quantization noise that hurt Medium.
+
+#### Full Results
+
+| Model | CPU mAP (FP32) | CPU FPS | Hailo mAP (INT8) | Hailo FPS | Speedup | Accuracy Retention |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| **YOLO26n** | 0.402 | 6.50 | 0.371 | 86.5 | 13.3x | 92.3% |
+| **YOLO26s** | 0.477 | 2.62 | 0.424 | 37.5 | 14.3x | 88.9% |
+| **YOLO26m** | 0.525 | 0.88 | 0.441 | 23.4 | 26.6x | 84.0% |
+| **YOLO26l** | 0.541 | 0.74 | 0.473 | 17.9 | 24.2x | 87.4% |
+
+The speedup numbers are notable: Medium and Large see 24–27x speedup over CPU, compared to 13–14x for Nano and Small. This is because the larger models are more compute-bound on the CPU (sub-1 FPS), so the Hailo-8L's fixed throughput delivers a proportionally larger gain.
+
+### 16. Next Steps
+
+1. **Investigate YOLO26m accuracy drop:** The 84.0% retention is the worst of any variant. A layer-by-layer noise analysis using Hailo's `analyze_noise` tool should identify the specific bottleneck layers.
+2. **Mixed-precision experiments:** If the noise analysis reveals isolated problem layers, setting them to 16-bit precision (`a16_w16`) may recover accuracy with minimal latency impact.
+3. **Context reduction:** Experiment with DFC compiler settings to reduce the number of execution contexts, particularly for the larger variants.
 
 ## Conclusion
 
-This iterative process of discovery, problem-solving, and validation demonstrates a complete, if preliminary, port of a next-generation object detection model to a resource-constrained edge device.
+This project demonstrates a complete port of the YOLO26 model family to the Hailo-8L, from initial graph splitting through calibration, C++ optimization, and multi-variant scaling. The templated hybrid architecture — NPU backbone with CPU postprocessing — generalizes cleanly across all four variants, achieving 17–86 FPS on a Raspberry Pi 5 depending on model size.
+
+The most interesting finding is that scaling doesn't behave uniformly under quantization: the Medium variant loses more accuracy relative to its baseline than either the smaller or larger models. Understanding and fixing this is the focus of ongoing work.
+
+The full code, pre-compiled HEF files, and evaluation scripts are available on GitHub: [DanielDubinsky/yolo26_hailo](https://github.com/DanielDubinsky/yolo26_hailo){: target="_blank"}
