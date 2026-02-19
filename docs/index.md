@@ -41,6 +41,15 @@ Production-ready vision systems that don't compromise between speed and precisio
 
 <div class="case-studies-grid">
 
+<a href="case-studies/quantization_noise_analysis_yolo26/" class="case-study-card">
+    <img src="assets/images/yolo-thumbnail.png" alt="YOLO26 Quantization Noise Analysis" class="card-image">
+    <div class="card-content">
+        <h3>Quantization Noise Analysis: YOLO26 on Hailo-8L</h3>
+        <p>Layer-by-layer SNR analysis explaining why YOLO26-M loses 16% accuracy after INT8 quantization despite having more parameters than the Small variant.</p>
+    </div>
+</a>
+
+
 <a href="case-studies/yolo26n-hailo-L8/" class="case-study-card">
     <img src="assets/images/yolo-thumbnail.png" alt="YOLO26n on Hailo-8L" class="card-image">
     <div class="card-content">

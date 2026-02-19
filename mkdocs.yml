@@ -30,6 +30,7 @@ nav:
   - Home: index.md
   - Contact: contact.md
   - Case Studies:
+      - "Quantization Noise Analysis: YOLO26 on Hailo-8L": case-studies/quantization_noise_analysis_yolo26.md
       - "Porting YOLO26n to the Hailo-8L": case-studies/yolo26n-hailo-L8.md
       - "Non-Invasive Quantification of Viability": case-studies/non-invasive-viability.md
       - "Optimizing SRNN": case-studies/optimizing-srnn.md
