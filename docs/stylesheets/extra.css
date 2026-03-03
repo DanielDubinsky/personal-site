@@ -186,6 +186,81 @@ body {
     color: var(--md-primary-bg-color);
 }
 
+/* Demo Page */
+.demo-page-header {
+  text-align: center;
+  padding: 3rem 1rem 2rem;
+}
+
+.demo-title {
+  font-size: 3rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0 0 1rem;
+  line-height: 1.1;
+}
+
+.demo-title-x {
+  color: var(--md-accent-fg-color);
+}
+
+.demo-subtitle {
+  font-size: 1.15rem;
+  color: var(--md-default-fg-color--light);
+  max-width: 600px;
+  margin: 0 auto 0.5rem;
+}
+
+.demo-tagline {
+  font-size: 1rem;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--md-accent-fg-color);
+  margin: 0;
+}
+
+/* Demo Banner */
+.demo-banner {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.5rem 2rem;
+  margin: 0 0 3rem;
+  border: 2px solid var(--md-accent-fg-color);
+  border-radius: 8px;
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.demo-banner:hover {
+  background: var(--md-code-bg-color);
+  transform: translateY(-2px);
+  color: inherit;
+}
+
+.demo-banner-play {
+  font-size: 2.5rem;
+  color: var(--md-accent-fg-color);
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.demo-banner-text {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.demo-banner-text strong {
+  font-size: 1.2rem;
+  display: block;
+}
+
+.demo-banner-text > span {
+  font-size: 0.95rem;
+  color: var(--md-default-fg-color--light);
+}
+
 /* Chart Canvas */
 #yoloChart {
     width: 100%;

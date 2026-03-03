@@ -26,8 +26,9 @@ theme:
         icon: material/brightness-4
         name: Switch to light mode
 
-nav: 
+nav:
   - Home: index.md
+  - Demo: demo.md
   - Contact: contact.md
   - Case Studies:
       - "Quantization Noise Analysis: YOLO26 on Hailo-8L": case-studies/quantization_noise_analysis_yolo26.md
