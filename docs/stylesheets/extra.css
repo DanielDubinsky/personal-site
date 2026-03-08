@@ -261,6 +261,96 @@ body {
   color: var(--md-default-fg-color--light);
 }
 
+/* Secondary demo banner (homepage) */
+.demo-banner-secondary {
+  border-color: var(--md-default-fg-color--lightest);
+  margin-top: -1.5rem;
+}
+
+.demo-banner-secondary .demo-banner-play {
+  color: var(--md-default-fg-color--light);
+}
+
+/* Demo Grid (index page) */
+.demo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+  margin: 0 0 3rem;
+}
+
+.demo-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 8px;
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.2s, box-shadow 0.2s;
+  position: relative;
+}
+
+.demo-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  color: inherit;
+}
+
+.demo-card-badge {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: var(--md-accent-fg-color);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.demo-card-image {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+.demo-card-content {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.demo-card-title {
+  font-size: 1.15rem;
+  display: block;
+}
+
+.demo-card-desc {
+  font-size: 0.95rem;
+  color: var(--md-default-fg-color--light);
+}
+
+.demo-card-stat {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  color: var(--md-accent-fg-color);
+}
+
+/* Demo details block */
+.demo-details {
+  max-width: 720px;
+  margin: 2rem auto 0;
+  padding: 1.5rem;
+  background: var(--md-code-bg-color);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
 /* Chart Canvas */
 #yoloChart {
     width: 100%;

@@ -18,11 +18,19 @@ hide:
 
 </div>
 
-<a href="demo/" class="demo-banner">
+<a href="demos/open-vocab/" class="demo-banner">
   <span class="demo-banner-play">&#9654;</span>
   <span class="demo-banner-text">
-    <strong>Watch the Demo</strong>
-    <span>Real-time multi-object tracking on Hailo-8L &mdash; 30 FPS on Raspberry Pi 5</span>
+    <strong>New: Open-Vocabulary Detection</strong>
+    <span>Type any query, get real-time detections on Hailo-8 - ~24 FPS on Raspberry Pi 5</span>
+  </span>
+</a>
+
+<a href="demos/yolo26/" class="demo-banner demo-banner-secondary">
+  <span class="demo-banner-play">&#9654;</span>
+  <span class="demo-banner-text">
+    <strong>YOLO26 x Hailo-8L</strong>
+    <span>Real-time multi-object tracking - 30 FPS on Raspberry Pi 5</span>
   </span>
 </a>
 

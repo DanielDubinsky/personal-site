@@ -28,7 +28,10 @@ theme:
 
 nav:
   - Home: index.md
-  - Demo: demo.md
+  - Demos:
+      - demos/index.md
+      - "YOLO26 x Hailo-8L": demos/yolo26.md
+      - "Open-Vocabulary Detection": demos/open-vocab.md
   - Contact: contact.md
   - Case Studies:
       - "Quantization Noise Analysis: YOLO26 on Hailo-8L": case-studies/quantization_noise_analysis_yolo26.md
