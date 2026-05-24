@@ -77,8 +77,8 @@ Production-ready vision systems that don't compromise between speed and precisio
 <a href="case-studies/non-invasive-viability/" class="case-study-card">
     <img src="assets/images/spheroids-thumbnail.png" alt="Biological Spheroids" class="card-image">
     <div class="card-content">
-        <h3>Non-Invasive Qualification of Viability in Spheroids</h3>
-        <p>Combining classical CV and deep learning for peer-reviewed biological research.</p>
+        <h3>Non-Invasive Quantification of Viability in Spheroids</h3>
+        <p>Published in <em>Frontiers in Bioengineering and Biotechnology</em> (2026). Combining classical CV and deep learning to non-invasively predict cell viability.</p>
     </div>
 </a>
 

@@ -1,8 +1,9 @@
 # Non-Invasive Quantification of Viability in Spheroids Using Deep Learning
 
-06.04.2025  
+2026  
 **Paper Title:** Non-Invasive Quantification of Viability in Spheroids Using Deep Learning  
-**Link:** [Read on bioRxiv](https://www.biorxiv.org/content/10.1101/2025.03.09.642246v2.full){: target="_blank"}
+**Published in:** *Frontiers in Bioengineering and Biotechnology*  
+**Link:** [Read the paper (DOI: 10.3389/fbioe.2026.1797474)](https://doi.org/10.3389/fbioe.2026.1797474){: target="_blank"}
 
 ## Summary
 
