@@ -34,6 +34,7 @@ nav:
       - "Open-Vocabulary Detection": demos/open-vocab.md
   - Contact: contact.md
   - Case Studies:
+      - "YOLO26 on Jetson Orin Nano 8GB vs Hailo-8L (and Hailo-8)": case-studies/yolo26-jetson-vs-hailo.md
       - "Quantization Noise Analysis: YOLO26 on Hailo-8L": case-studies/quantization_noise_analysis_yolo26.md
       - "Porting YOLO26n to the Hailo-8L": case-studies/yolo26n-hailo-L8.md
       - "Non-Invasive Quantification of Viability": case-studies/non-invasive-viability.md
@@ -64,5 +65,4 @@ extra_css:
   - stylesheets/extra.css
 
 extra_javascript:
-  - https://polyfill.io/v3/polyfill.min.js?features=es6
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js

@@ -57,6 +57,14 @@ Production-ready vision systems that don't compromise between speed and precisio
 
 <div class="case-studies-grid">
 
+<a href="case-studies/yolo26-jetson-vs-hailo/" class="case-study-card">
+    <img src="assets/images/yolo-thumbnail.png" alt="YOLO26 on Jetson Orin Nano vs Hailo" class="card-image">
+    <div class="card-content">
+        <h3>YOLO26 on Jetson Orin Nano 8GB vs Hailo-8L (and Hailo-8)</h3>
+        <p>Head-to-head accelerator comparison at 15 W. Jetson FP16 beats Hailo zoo accuracy at every size with no quantization; Hailo-8 wins on small-model throughput; the Jetson INT8 path I tried was Pareto-dominated by FP16.</p>
+    </div>
+</a>
+
 <a href="case-studies/quantization_noise_analysis_yolo26/" class="case-study-card">
     <img src="assets/images/yolo-thumbnail.png" alt="YOLO26 Quantization Noise Analysis" class="card-image">
     <div class="card-content">
