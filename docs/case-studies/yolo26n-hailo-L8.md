@@ -10,7 +10,7 @@ This project successfully ported the YOLO26n model to the Hailo-8L AI accelerato
 
 ### Performance Metrics
 
-The C++ implementation achieves a ~2.3x speedup over the Python baseline and a ~13x speedup over the ONNX baseline.
+The C++ implementation achieves a ~2.3x speedup over the Python baseline and a ~13x speedup over the ONNX (Open Neural Network Exchange) baseline.
 
 **Table 1: End-to-End Performance**
 
@@ -25,14 +25,14 @@ The full code for this project is available on GitHub: [DanielDubinsky/yolo26_ha
 
 It includes:
 
-*   Code to export YOLO26n to HEF
+*   Code to export YOLO26n to Hailo Executable Format (HEF)
 *   C++ inference implementation
 *   Python inference implementation
 
 
 ### Accuracy
 
-The drop in accuracy is likely due to the sensitivity of the non-NMS heads to quantization noise. In this hybrid architecture, the backbone is quantized to 8-bit integers, while the head runs in floating point. Small quantization errors in the feature maps output by the backbone can propagate to the regression outputs in the head, which are highly sensitive in anchor-free detectors like this. However, more inspection is warranted, I would specifically start with the quantization ranges for the last layers.
+The drop in accuracy is likely due to the sensitivity of the non-NMS (Non-Maximum Suppression) heads to quantization noise. In this hybrid architecture, the backbone is quantized to 8-bit integers, while the head runs in floating point. Small quantization errors in the feature maps output by the backbone can propagate to the regression outputs in the head, which are highly sensitive in anchor-free detectors like this. However, more inspection is warranted, I would specifically start with the quantization ranges for the last layers.
 
 ### Latency Breakdown
 
@@ -61,13 +61,13 @@ Assuming the following:
 
 | Parameter | Value |
 | --- | --- |
-| **Theoretical TOPS (Hailo-8L)** | 13 TOPS |
-| **YOLO26n Total FLOPs** | 5.4 Billion |
+| **Theoretical TOPS (Tera Operations Per Second, Hailo-8L)** | 13 TOPS |
+| **YOLO26n Total FLOPs (Floating-point Operations)** | 5.4 Billion |
 | **Theoretical Compute Floor** | ~0.41 ms |
 | **Python Latency** | 27.61 ms |
 | **C++ Latency** | 11.92 ms |
 
-Additionally, the DFC automatically partitioned the backbone into **5 execution contexts** due to SRAM limits on the Hailo-8L. This adds fixed PCIe overhead to every frame as the control software switches contexts. According to Gemini, 5 execution contexts for a nano-sized model is too much, so a deeper dive is warranted.
+Additionally, the Hailo Dataflow Compiler (DFC) automatically partitioned the backbone into **5 execution contexts** due to SRAM (Static Random Access Memory) limits on the Hailo-8L. This adds fixed PCIe overhead to every frame as the control software switches contexts. According to Gemini, 5 execution contexts for a nano-sized model is too much, so a deeper dive is warranted.
 
 ---
 
@@ -92,7 +92,7 @@ model.export(format="onnx", opset=11)
 ### 2. Attempt Initial Parsing
 With the ONNX file, the next logical step was a direct conversion to the Hailo Archive (HAR) format using the Hailo Dataflow Compiler (DFC). This attempt failed.
 
-The DFC reported that several operators within the model's detection head were not natively supported by the Hailo-8L NPU.
+The DFC reported that several operators within the model's detection head were not natively supported by the Hailo-8L NPU (Neural Processing Unit).
 
 ```bash
 hailo_sdk_client.model_translator.exceptions.ParsingWithRecommendationException: Parsing failed. The errors found in the graph are:
@@ -146,7 +146,7 @@ With the pipeline validated, the next step was to perform proper post-training q
 *   **Strategy:** The DFC was configured for **Optimization Level 2**, which includes equalization and 4 epochs of fine-tuning.
 
 #### 7.1. Resolve Environment Issues
-Attempting to run the full quantization process revealed significant environment issues. The Hailo Docker container, running in a WSL2 environment, was not correctly using the host's NVIDIA RTX 4070 Ti for acceleration, causing the process to fall back to CPU and extending the estimated time from minutes to hours.
+Attempting to run the full quantization process revealed significant environment issues. The Hailo Docker container, running in a WSL2 (Windows Subsystem for Linux 2) environment, was not correctly using the host's NVIDIA RTX 4070 Ti for acceleration, causing the process to fall back to CPU and extending the estimated time from minutes to hours.
 
 Three patches were required to fix this:
 

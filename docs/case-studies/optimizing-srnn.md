@@ -27,7 +27,7 @@ The following figure shows the runtime improvement on a common GPU used for trai
   <em>
   Figure 1. Runtime vs batch size and sequence length.
   <br>
-  Original implementation of SRNN (orange) is slower than the baseline network GRU (blue) which is slower than the optimized version of SRNN (green).
+  Original implementation of SRNN (orange) is slower than the baseline network GRU (Gated Recurrent Unit, blue) which is slower than the optimized version of SRNN (green).
   </em>
 </p>
 
@@ -44,7 +44,7 @@ The following figure shows the runtime improvement on a common GPU used for trai
 ## 2. Background
 
 The Shuffling Recurrent Neural Network (SRNN) is a recurrent architecture introduced by [Rotman and Wolf](https://doi.org/10.1609/aaai.v35i11.17136){: target="_blank"} to address instabilities in training deep RNNs, such as exploding and vanishing gradients.  
-It modifies the standard RNN recurrence by applying a *circular shift* to the hidden state before combining it with the current input.  
+It modifies the standard Recurrent Neural Network (RNN) recurrence by applying a *circular shift* to the hidden state before combining it with the current input.  
 This simple change encourages better gradient flow and spatial information mixing between hidden units.
 
 SRNN’s PyTorch implementation introduces significant overhead.  

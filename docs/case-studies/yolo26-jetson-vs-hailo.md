@@ -2,21 +2,21 @@
 
 31.05.2026
 
-After porting YOLO26 to the Hailo-8L on a Raspberry Pi 5 ([porting chronology](../yolo26n-hailo-L8/), [quantization noise analysis](../quantization_noise_analysis_yolo26/)), I ran the same model on the **Jetson Orin Nano 8GB at its 7 W power mode** (which draws 4.6-5.3 W actual, matching Pi 5 + Hailo) and on the full **Hailo-8** (26 TOPS) as a third reference point. This compares all three at the same power budget.
+After porting YOLO26 to the Hailo-8L on a Raspberry Pi 5 ([porting chronology](../yolo26n-hailo-L8/), [quantization noise analysis](../quantization_noise_analysis_yolo26/)), I ran the same model on the **Jetson Orin Nano 8GB at its 7 W power mode** (which draws 4.6-5.3 W actual, matching Pi 5 + Hailo) and on the full **Hailo-8** (26 TOPS, Tera Operations Per Second) as a third reference point. This compares all three at the same power budget.
 
-**At matched ~5 W power on YOLO26, no single accelerator dominates.** Hailo-8 wins small-model speed across n/s/m. Jetson wins accuracy at every size, runs `l` directly from off-the-shelf Ultralytics exports while Hailo `l` requires DFC self-compilation (covered in my [prior case study](../yolo26n-hailo-L8/)). Hailo-8L is the cheap-and-low-power entry point. Each platform's silicon is sized for a different part of the curve.
+**At matched ~5 W power on YOLO26, no single accelerator dominates.** Hailo-8 wins small-model speed across n/s/m. Jetson wins accuracy at every size, runs `l` directly from off-the-shelf Ultralytics exports while Hailo `l` requires Dataflow Compiler (DFC) self-compilation (covered in my [prior case study](../yolo26n-hailo-L8/)). Hailo-8L is the cheap-and-low-power entry point. Each platform's silicon is sized for a different part of the curve.
 
 ## Headline result
 
 <iframe src="../images/jetson_vs_hailo_pareto.html" width="100%" height="600px" style="border:none;"></iframe>
-*Figure 1: Inference latency vs mAP across the three accelerator options and four model sizes. Top-left is the desirable corner. FP32 reference per variant shown as horizontal dotted lines.*
+*Figure 1: Inference latency vs mean Average Precision (mAP) across the three accelerator options and four model sizes. Top-left is the desirable corner. FP32 reference per variant shown as horizontal dotted lines.*
 
 1. **Hailo-8 wins small-and-fast.** 84 FPS end-to-end on `n`. If your application fits `n` or `s` and FPS matters more than 0.025 mAP, this is the pick.
 2. **Jetson FP16 wins accuracy at every size.** Matches FP32 to within rounding. Also the only platform that runs `l` from an off-the-shelf export.
 
 ### Full numbers
 
-Full COCO val2017, 1000 frame sustained timing after warmup. Inference is accelerator silicon only (H2D + execute + D2H). Deployable FPS = `1000 / (Pi 5 pre + accelerator inference + Pi 5 post)` for all rows, so the host-CPU side is the same Pi 5 across platforms.
+Full COCO val2017, 1000 frame sustained timing after warmup. Inference is accelerator silicon only (host-to-device copy + execute + device-to-host copy). Deployable FPS = `1000 / (Pi 5 pre + accelerator inference + Pi 5 post)` for all rows, so the host-CPU side is the same Pi 5 across platforms.
 
 | Variant | Hailo-8L (Pi 5) | Hailo-8 (Pi 5) | Jetson FP16 (7W mode) |
 |:---|:---:|:---:|:---:|
@@ -41,13 +41,13 @@ Full COCO val2017, 1000 frame sustained timing after warmup. Inference is accele
 | `m` | **3.3**‡ | 4.4‡ | 5.3 |
 | `l` | self-compile | self-compile | 5.3 |
 
-† Hailo Model Zoo currently ships `yolo26n/s/m` HEFs (Hailo-8L and Hailo-8) but not `yolo26l`. The DFC self-compile flow is documented in the [porting case study](../yolo26n-hailo-L8/).
+† Hailo Model Zoo currently ships `yolo26n/s/m` Hailo Executable Format (HEF) files for Hailo-8L and Hailo-8 but not `yolo26l`. The DFC self-compile flow is documented in the [porting case study](../yolo26n-hailo-L8/).
 
-‡ Hailo system power = measured Pi 5 PMIC + Hailo chip data sheet typical (Hailo-8L 1.5 W, Hailo-8 2.5 W). Jetson is directly measured. See [Power](#power) section for the methodology asymmetry.
+‡ Hailo system power = measured Pi 5 PMIC (Power Management Integrated Circuit) + Hailo chip data sheet typical (Hailo-8L 1.5 W, Hailo-8 2.5 W). Jetson is directly measured. See [Power](#power) section for the methodology asymmetry.
 
 ## The setup
 
-The Jetson is an **AGX Orin Developer Kit reflashed as a Nano 8GB** (`jetson-agx-orin-devkit-as-nano8gb internal`, NVIDIA-supported emulation), running at the **7 W power mode** (`nvpmodel -m 1`). At 7 W the Jetson runs on 4 cores capped at 960 MHz, with the GPU at 408 MHz and only 2 of 4 TPCs active. Actual measured power draw during YOLO inference: 4.6-5.3 W. The Hailo systems land in the 3.3-4.8 W range (Hailo-8L data sheet typical 1.5 W + Pi 5; Hailo-8 data sheet typical 2.5 W + Pi 5). All three are in the same single-digit-watt envelope on this workload.
+The Jetson is an **AGX Orin Developer Kit reflashed as a Nano 8GB** (`jetson-agx-orin-devkit-as-nano8gb internal`, NVIDIA-supported emulation), running at the **7 W power mode** (`nvpmodel -m 1`). At 7 W the Jetson runs on 4 cores capped at 960 MHz, with the GPU at 408 MHz and only 2 of 4 Texture Processing Clusters (TPCs) active. Actual measured power draw during YOLO inference: 4.6-5.3 W. The Hailo systems land in the 3.3-4.8 W range (Hailo-8L data sheet typical 1.5 W + Pi 5; Hailo-8 data sheet typical 2.5 W + Pi 5). All three are in the same single-digit-watt envelope on this workload.
 
 The Jetson's default power mode is **15 W** (`nvpmodel -m 0`), not 7 W. I chose 7 W here to match the Pi 5 + Hailo power envelope so the comparison is silicon-vs-silicon at the same budget, not budget-vs-budget. The 15 W comparison (where the Jetson is roughly 2× faster on `m`/`l` but draws ~7 W actual) is its own follow-up post.
 
@@ -55,11 +55,11 @@ Software: TensorRT 10.3, JetPack 6.2.2, CUDA 12.6. Hailo side unchanged from the
 
 **Same C++ pre/post on both sides**, identical `preprocess`/`postprocess`/`stats` headers byte for byte. Only the inference call differs (HailoRT vs TensorRT). Differences in the tables are silicon, driver, engine, not pipeline.
 
-**The Jetson recipe** is the onnx model from Ultralytics, built with `BuilderFlag.FP16`, no calibration. mAP retention 100 % vs FP32. Why FP16 not INT8: my current INT8 recipe (head FP16, backbone INT8 via TRT entropy calibration) at `m` is 17.1 ms / 0.468 mAP vs FP16's 22.8 ms / 0.524 mAP. That's 25 % faster for 0.056 mAP lost (~11 % relative). Recovering that accuracy without losing the speedup is its own post.
+**The Jetson recipe** is the ONNX (Open Neural Network Exchange) model from Ultralytics, built with `BuilderFlag.FP16`, no calibration. mAP retention 100 % vs FP32. Why FP16 not INT8: my current INT8 recipe (head FP16, backbone INT8 via TRT entropy calibration) at `m` is 17.1 ms / 0.468 mAP vs FP16's 22.8 ms / 0.524 mAP. That's 25 % faster for 0.056 mAP lost (~11 % relative). Recovering that accuracy without losing the speedup is its own post.
 
 ## Where each platform wins
 
-Three different specialisations, driven by what the silicon was designed for. **Hailo-8** has the most compute throughput (26 TOPS) and the most SRAM among the Hailo SKUs, so it splits YOLO26 into fewer execution contexts and wins raw speed on the variants it ships. **Hailo-8L** is the lowest-power option on the table (1.5 W chip typical; 3.3-3.9 W system) and is sized for small models where its limited SRAM still fits the workload acceptably. **Jetson FP16** has FP16 hardware that Hailo lacks, so it hits FP32-equivalent accuracy on every variant without any quantization recipe; at the 7 W mode its compute is throttled enough to give up the raw-speed advantage to Hailo at smaller variants, but it remains the only path to an off-the-shelf `l`.
+Three different specialisations, driven by what the silicon was designed for. **Hailo-8** has the most compute throughput (26 TOPS) and the most on-chip SRAM (Static Random Access Memory) among the Hailo SKUs, so it splits YOLO26 into fewer execution contexts and wins raw speed on the variants it ships. **Hailo-8L** is the lowest-power option on the table (1.5 W chip typical; 3.3-3.9 W system) and is sized for small models where its limited SRAM still fits the workload acceptably. **Jetson FP16** has FP16 hardware that Hailo lacks, so it hits FP32-equivalent accuracy on every variant without any quantization recipe; at the 7 W mode its compute is throttled enough to give up the raw-speed advantage to Hailo at smaller variants, but it remains the only path to an off-the-shelf `l`.
 
 The architectural reason these specialisations exist is the next section.
 
@@ -68,9 +68,9 @@ The architectural reason these specialisations exist is the next section.
 
 The question: why is yolo26n on Hailo-8L 12 ms when 5.4 GFLOPs ÷ 13 TOPS = 0.4 ms theoretical? Compute can't be the dominant cost.
 
-**Hypothesis.** The Hailo Dataflow Compiler partitions a model across multiple **execution contexts** because the model doesn't fit in on-chip SRAM. Each context is loaded into SRAM via PCIe DMA, the LCU (compute) sequencer fires, output is moved out, then the next context loads. At batch 1, this load-execute-unload cycle runs serially per context per frame, and the per-context overhead (DMA + control plane) doesn't shrink with model size.
+**Hypothesis.** The Hailo Dataflow Compiler partitions a model across multiple **execution contexts** because the model doesn't fit in on-chip SRAM. Each context is loaded into SRAM via PCIe DMA (Direct Memory Access), the LCU (compute) sequencer fires, output is moved out, then the next context loads. At batch 1, this load-execute-unload cycle runs serially per context per frame, and the per-context overhead (DMA + control plane) doesn't shrink with model size.
 
-**Direct test via `hailortcli run2 measure-fw-actions`.** This subcommand captures firmware-level events with clock-cycle timestamps during inference. The JSON reports `clock_cycle_MHz: 200` and Hailo's community forum confirms 200 MHz is the NPU compute clock on PCIe-constrained Hailo-8 variants (which the Hailo-8L on Pi 5 is). I treat that as the timestamp clock; the empirical cross-check is that sum-of-spans converted at 200 MHz matches HW Latency from `hailortcli benchmark` within ~4 %. Each context's events include `trigger_sequencer` and `sequencer_done_interrupt` brackets, which identify LCU compute-active time. Everything else in the action list (DMA setup, channel activation, interrupts, inter-context buffer hookup) is the overhead bucket.
+**Direct test via `hailortcli run2 measure-fw-actions`.** This subcommand captures firmware-level events with clock-cycle timestamps during inference. The JSON reports `clock_cycle_MHz: 200` and Hailo's community forum confirms 200 MHz is the NPU (Neural Processing Unit) compute clock on PCIe-constrained Hailo-8 variants (which the Hailo-8L on Pi 5 is). I treat that as the timestamp clock; the empirical cross-check is that sum-of-spans converted at 200 MHz matches HW Latency from `hailortcli benchmark` within ~4 %. Each context's events include `trigger_sequencer` and `sequencer_done_interrupt` brackets, which identify LCU compute-active time. Everything else in the action list (DMA setup, channel activation, interrupts, inter-context buffer hookup) is the overhead bucket.
 
 ```bash
 hailortcli run2 --mode raw_async -t 10 set-net yolo26m.hef \
@@ -109,11 +109,11 @@ Data sheet typicals: Hailo-8L 1.5 W, Hailo-8 2.5 W. Pi 5 idle ~2.7 W (rising und
 
 Jetson measured power during YOLO inference at 7 W mode: **4.6-5.3 W total** (via tegrastats sum), close to the Pi 5 + Hailo envelope. The "7 W" nameplate is a configured cap; actual draw at batch 1 is lower than the cap on the smaller variants and approaches the cap on `m`/`l`.
 
-Apples-to-apples power comparison has caveats: Pi 5's PMIC doesn't capture the Hailo's draw (AI Kit HAT regulates 3.3 V locally from 5 V via PCIe FFC, bypassing PMIC rails), and the Jetson's `VDD_GPU_SOC` rail covers more than just the GPU. A USB-C wall meter at each platform's input would give the definitive whole-platform answer.
+Apples-to-apples power comparison has caveats: Pi 5's PMIC doesn't capture the Hailo's draw (the AI Kit HAT, Hardware Attached on Top, regulates 3.3 V locally from 5 V via PCIe FFC, Flexible Flat Cable, bypassing PMIC rails), and the Jetson's `VDD_GPU_SOC` rail covers more than just the GPU. A USB-C wall meter at each platform's input would give the definitive whole-platform answer.
 
 ## Methodology summary
 
-Every number is from a sustained 1000-frame benchmark after 50 warmup frames. mAP via pycocotools COCOeval on full COCO val2017 (5000 images, IoU 0.50:0.95, conf 0.001).
+Every number is from a sustained 1000-frame benchmark after 50 warmup frames. mAP via pycocotools COCOeval on full COCO val2017 (5000 images, Intersection over Union, IoU, 0.50:0.95, conf 0.001).
 
 - **Hailo:** HailoRT 4.x C++ + Hailo Model Zoo v2.18.0 HEFs on Raspberry Pi 5 8 GB stock 2.4 GHz.
 - **Jetson:** TensorRT 10.3, JetPack 6.2.2 (CUDA 12.6, cuDNN 9.3), 7 W power mode (`nvpmodel -m 1`). Ultralytics ONNX, `BuilderFlag.FP16`, no calibration. Same C++ pre/post headers as the Hailo side.
@@ -125,17 +125,17 @@ If you're working on a similar problem, [get in touch](../contact.md). Happy to 
 
 ## Open questions
 
-1. **Can a Jetson INT8 recipe beat FP16?** INT8 has a 2x Tensor Core edge over FP16 that early experiments suggest is partly recoverable. First attempts land slower or less accurate than FP16. Next: per-layer SQNR analysis to find which Conv layers need higher precision, combined with `nvidia-modelopt` autotune. Possible follow-up post.
+1. **Can a Jetson INT8 recipe beat FP16?** INT8 has a 2x Tensor Core edge over FP16 that early experiments suggest is partly recoverable. First attempts land slower or less accurate than FP16. Next: per-layer SQNR (Signal-to-Quantization-Noise Ratio) analysis to find which Conv layers need higher precision, combined with `nvidia-modelopt` autotune. Possible follow-up post.
 2. **Real Nano vs AGX-as-Nano emulation.** Direct measurement on a retail Nano dev kit would close the emulation caveat.
 
 ## Conclusion
 
 Two methodology lessons that came out of this work.
 
-**Power-matched comparison matters.** "Hailo at 5 W vs Jetson at 15 W" would have made the Jetson look roughly 2× faster at `m` than it actually is at matched 5 W power. The vendor nameplates ("15 W TDP" vs "1.5 W typical chip") don't reflect actual draw at batch-1 edge inference, which lands in 3-5 W for all three platforms tested. Run the comparison at the configuration you'd actually deploy.
+**Power-matched comparison matters.** "Hailo at 5 W vs Jetson at 15 W" would have made the Jetson look roughly 2× faster at `m` than it actually is at matched 5 W power. The vendor nameplates ("15 W Thermal Design Power, TDP" vs "1.5 W typical chip") don't reflect actual draw at batch-1 edge inference, which lands in 3-5 W for all three platforms tested. Run the comparison at the configuration you'd actually deploy.
 
 **Inside-the-silicon profiling matters.** The FPS-per-TOPS marketing view of Hailo undersells how much of its HW latency is per-context overhead at batch 1 (60-80 % depending on model size). The Hailo Dataflow Compiler's per-context cost only amortizes at batch > 1; for batch-1 edge deployment you pay it in full. Firmware-level profiling via `hailortcli run2 measure-fw-actions` exposed this directly; the FPS benchmark alone didn't.
 
-Coming up next in this series: a Jetson-only post comparing the 7 W and 15 W power modes. At 15 W (the Jetson default), the silicon delivers roughly 2× the throughput on `m`/`l` while drawing 5-7 W actual, the same envelope as Pi 5 + Hailo. The follow-up unpacks where that extra performance comes from architecturally and when 7 W mode actually saves power.
+Next in this series: [Jetson Orin Nano 7 W vs 15 W on YOLO26: same idle floor, half the headroom](../yolo26-jetson-power-modes/). At 15 W (the Jetson default), the silicon delivers roughly 2× the throughput on `m`/`l` while drawing 5-7 W actual. The follow-up unpacks where that extra performance comes from architecturally and shows that the "lower power mode = more efficient" intuition is wrong on this silicon.
 
 What this post doesn't settle: real Nano vs AGX-as-Nano emulation, thermal-constrained sustained throughput, and at-the-wall power measurement on the Hailo side.

@@ -1,14 +1,14 @@
 # Quantization Noise Analysis: YOLO26 on Hailo-8L
 19.02.2026
 
-This post documents a layer-by-layer noise analysis of the YOLO26 model family after INT8 quantization on the Hailo-8L, motivated by an anomalous accuracy drop in the Medium variant. The analysis was performed using the Hailo Dataflow Compiler's `analyze_noise` tool. For context on the porting process and hybrid architecture, see the [full porting chronology](../yolo26n-hailo-L8/).
+This post documents a layer-by-layer noise analysis of the YOLO26 model family after INT8 quantization on the Hailo-8L, motivated by an anomalous accuracy drop in the Medium variant. The analysis was performed using the Hailo Dataflow Compiler (DFC)'s `analyze_noise` tool. For context on the porting process and hybrid architecture, see the [full porting chronology](../yolo26n-hailo-L8/).
 
 ## 1. Accuracy Retention by Variant
 
 Post-quantization benchmarks across the full YOLO26 family produced a non-monotonic accuracy retention curve:
 
 <iframe src="../images/plot_a_quantization_cliff_interactive.html" width="100%" height="600px" style="border:none;"></iframe>
-*Figure 1: FP32 vs. INT8 mAP across variants. YOLO26-M shows disproportionate accuracy loss.*
+*Figure 1: FP32 vs. INT8 mean Average Precision (mAP) across variants. YOLO26-M shows disproportionate accuracy loss.*
 
 | Model | CPU mAP (FP32) | Hailo mAP (INT8) | Accuracy Retention |
 |:------|:--------------:|:-----------------:|:-----------------:|
@@ -17,7 +17,7 @@ Post-quantization benchmarks across the full YOLO26 family produced a non-monoto
 | yolo26m | 0.525 | 0.441 | 84.0% |
 | yolo26l | 0.541 | 0.473 | 87.4% |
 
-YOLO26-M has the lowest accuracy retention (84.0%) despite having a higher FP32 baseline than Small. YOLO26-L, which has more layers below the 10 dB SNR threshold in absolute terms (271 vs. 158), recovers to 87.4%, suggesting its parameter count provides sufficient redundancy to absorb quantization noise that M cannot.
+YOLO26-M has the lowest accuracy retention (84.0%) despite having a higher FP32 baseline than Small. YOLO26-L, which has more layers below the 10 dB Signal-to-Noise Ratio (SNR) threshold in absolute terms (271 vs. 158), recovers to 87.4%, suggesting its parameter count provides sufficient redundancy to absorb quantization noise that M cannot.
 
 ## 2. Layer-by-Layer SNR Analysis
 

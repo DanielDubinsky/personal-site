@@ -17,7 +17,7 @@ NViR replaces the destructive chemical assay with a computer vision proxy. The m
 
 ### Technical Architecture
 *   **Backbone:** ResNet18 pre-trained on ImageNet.
-*   **Head:** MLP regression head.
+*   **Head:** Multi-Layer Perceptron (MLP) regression head.
 *   **Input:** Bright-field microscopy images of liver spheroids.
 *   **Output:** viability score (normalized ATP).
 
