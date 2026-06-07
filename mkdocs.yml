@@ -34,6 +34,7 @@ nav:
       - "Open-Vocabulary Detection": demos/open-vocab.md
   - Contact: contact.md
   - Case Studies:
+      - "Jetson Orin Nano 7 W vs 15 W on YOLO26": case-studies/yolo26-jetson-power-modes.md
       - "YOLO26 on Jetson Orin Nano 8GB vs Hailo-8L (and Hailo-8)": case-studies/yolo26-jetson-vs-hailo.md
       - "Quantization Noise Analysis: YOLO26 on Hailo-8L": case-studies/quantization_noise_analysis_yolo26.md
       - "Porting YOLO26n to the Hailo-8L": case-studies/yolo26n-hailo-L8.md

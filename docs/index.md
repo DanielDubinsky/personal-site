@@ -57,6 +57,14 @@ Production-ready vision systems that don't compromise between speed and precisio
 
 <div class="case-studies-grid">
 
+<a href="case-studies/yolo26-jetson-power-modes/" class="case-study-card">
+    <img src="assets/images/yolo-thumbnail.png" alt="Jetson Orin Nano 7 W vs 15 W on YOLO26" class="card-image">
+    <div class="card-content">
+        <h3>Jetson Orin Nano 7 W vs 15 W on YOLO26</h3>
+        <p>The silicon idle floor is identical in both modes (2.79 W measured) — 7 W mode only caps the upper bound. For YOLO26 at variants bigger than n, 7 W trades ~50% throughput for ~25% power. Lower watts ≠ better efficiency.</p>
+    </div>
+</a>
+
 <a href="case-studies/yolo26-jetson-vs-hailo/" class="case-study-card">
     <img src="assets/images/yolo-thumbnail.png" alt="YOLO26 on Jetson Orin Nano vs Hailo" class="card-image">
     <div class="card-content">
